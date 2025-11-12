@@ -1,0 +1,19 @@
+{
+  "name": "advance_backend",
+  "version": "1.0.0",
+  "description": "Advance Backend Series",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon  src/index.js"
+  },
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "author": "shalu kumari",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
