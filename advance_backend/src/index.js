@@ -1,17 +1,12 @@
 // require('dotenv').config()
 // or
 import dotenv from "dotenv";
-import mongoose from 'mongoose';
-import {DB_NAME} from './constants.js';
-import express from "express";
 import connectDB from "./db/index.js";
-const app = express();
-
+import {app} from "./app.js";
 
 dotenv.config({
     path: './env'
 })
-
 
 connectDB()
 .then( () => {
@@ -22,8 +17,6 @@ connectDB()
 .catch((error) => {
     console.log("MONGO db connection failed !!!", error)
 })
-
-
 
 // here we use effi ;()()
 // ; semicolon isliye use karte hai kyu ki agar phele wale line me semicolon na laga ho to koi error na aaye
