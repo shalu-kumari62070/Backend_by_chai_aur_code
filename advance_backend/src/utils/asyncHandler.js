@@ -6,7 +6,6 @@ const asyncHandler = (requestHandler) => {
 
 export {asyncHandler}
 
-
 // now we see how to write same code in try catch way
 
 // const asyncHandler = () => {}
