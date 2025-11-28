@@ -1,7 +1,6 @@
 import mongoose, {Schema} from 'mongoose';
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt";
-import { use } from 'react';
 
 const userSchema = new Schema(
     {
@@ -47,7 +46,7 @@ const userSchema = new Schema(
             type: String
         },
     }, 
-    {timeStamps: true}
+    {timestamps: true}
 )
 
 userSchema.pre("save", async function(next){
@@ -58,8 +57,8 @@ userSchema.pre("save", async function(next){
 })
 
 // cutom method create karenge
-userSchema.methods.isPasswordCorrect = async function(password) {
-    return await bcrypt.compare(password, this.password)
+userSchema.methods.isPasswordCorrect = async function(password) { // ye wala password user wala hai 
+    return await bcrypt.compare(password, this.password) // this.password ye saved wale user ka hai
 }
 
 userSchema.methods.generateAccessToken = function(){
@@ -76,7 +75,7 @@ userSchema.methods.generateAccessToken = function(){
         }
     )
 }
-userSchema.methods.generateRefereshToken = function(){
+userSchema.methods.generateRefreshToken = function(){
     return jwt.sign(
         {
             _id : this._id

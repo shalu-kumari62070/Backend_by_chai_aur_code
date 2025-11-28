@@ -8,6 +8,7 @@ const storage = multer.diskStorage({
     cb(null, file.originalname)
   }
 });
+// ye multer ka middleware hai
 
 export const upload = multer({ 
     storage,
