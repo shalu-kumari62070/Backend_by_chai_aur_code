@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import {User} from '../models/user.model.js'
 import {uploadOnCoudinary} from '../utils/cloudinary.js'
 import { ApiResponse } from "../utils/ApiResponse.js";
+import jwt from "jsonwebtoken";
 
 const generateAccessAndRefreshToken = async(userId) => {
     try {
@@ -122,9 +123,10 @@ const loginUser = asyncHandler( async (req, res) =>{
 
     //get data from req body 
     const {username, email, password} = req.body
+    console.log(email);
 
     // check 
-    if(!username || !email){
+    if(!username && !email){
         throw new ApiError(400, "username or email is required")
     }
 
@@ -202,8 +204,56 @@ const logoutUser = asyncHandler(async(req, res) => {
 
 })
 
+// code acces and refresh token ka endpoint
+const refreshAccessToken = asyncHandler( async(req, res) => {
+    const incomingRefreshToken = req.cookie.refreshToken || req.body.refreshToken
+
+    if(!incomingRefreshToken){
+        throw new ApiError(401, "Unauthorized request")
+    }
+
+    try {
+        const decodedToken = jwt.verify(
+            incomingRefreshToken, 
+            process.env.REFERESH_TOKEN_SECRET,
+        )
+    
+        const user = await User.findById(decodedToken?._id)
+    
+        if(!user){
+            throw new ApiError(401, "Invalid refresh token")
+        }
+    
+        if(incomingRefreshToken != user?.refreshToken){
+            throw new ApiError(401, "Refresh token is expired or used")
+        }
+    
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+    
+        const {accessToken, newRefreshToken} = await generateAccessAndRefreshToken(user._id)
+    
+        return res
+        .status(200)
+        .Cookie("accessToken", accessToken, options)
+        .Cookie("refreshToken", newRefreshToken, options)
+        .json(new ApiResponse(
+            200,
+            {refreshToken: newRefreshToken}, 
+            "Access token refreshed "
+        ))
+    } catch (error) {
+        throw new ApiError(401, error?.message || "Invalid refresh token")
+    }
+
+
+})
+
 export {
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    refreshAccessToken
 };
